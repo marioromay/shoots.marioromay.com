@@ -249,7 +249,7 @@ export const SlideshowModal: React.FC<SlideshowModalProps> = ({
           <div className="flex items-center gap-3">
             <MarioRomayLogo variant="dark" size="sm" />
             <span className="hidden sm:inline-block text-[11px] text-neutral-400 font-mono tracking-wider">
-              {SESSION_INFO.clientName} · Portrait Collection
+              {SESSION_INFO.clientName}
             </span>
           </div>
 

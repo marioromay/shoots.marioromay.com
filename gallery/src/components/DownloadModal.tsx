@@ -57,7 +57,7 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({
               Download Gallery Collection
             </h3>
             <p className="text-xs text-neutral-500 mt-0.5">
-              {SESSION_INFO.clientName} · {SESSION_INFO.sessionType} ({SESSION_INFO.year})
+              {SESSION_INFO.clientName}{SESSION_INFO.year && ` · ${SESSION_INFO.year}`}
             </p>
           </div>
           <button

@@ -21,7 +21,7 @@ export function GalleryEntrance({photos,photoCount=photos.length,onEnter}:{photo
    <div className="entrance-copy">
     <MarioRomayLogo size="lg" className="entrance-logo"/>
     <h1 id="entrance-title">{SESSION_INFO.clientName}</h1>
-    <p>{SESSION_INFO.sessionType}</p><div className="entrance-details">{SESSION_INFO.year && <span>{SESSION_INFO.year}</span>}<span>{photoCount} photographs</span></div>
+    <div className="entrance-details">{SESSION_INFO.year && <span>{SESSION_INFO.year}</span>}<span>{photoCount} photographs</span></div>
     <button onClick={onEnter} className="entrance-button">View Gallery</button>
    </div>
   </section>

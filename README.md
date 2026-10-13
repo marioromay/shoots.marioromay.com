@@ -32,7 +32,7 @@ This metadata stays in R2 and can be changed without deploying code. No admin pa
 
 ## UI
 
-Dark mode by default, theme-specific original logos, random cover photographs rotating every four seconds with pause and reduced-motion support. Centered entrance on phones and desktop. Masonry is the default, with Rows and Large views. Slideshow, individual downloads, and browser-generated ZIP archives are included. Favorites are saved per gallery in the current browser only. Large ZIP downloads require enough device memory to hold the originals.
+Dark mode by default, theme-specific original logos, random cover photographs rotating every four seconds with pause and reduced-motion support. Centered entrance on phones and desktop. Masonry is the default, with Rows as the alternative. Identity, date range, photo count, layouts and controls share one toolbar row; phones use labeled icons. Collection-type subtitles are omitted. Slideshow, individual downloads, and browser-generated ZIP archives are included. Favorites are saved per gallery in the current browser only. Large ZIP downloads require enough device memory to hold the originals.
 
 ## Development
 

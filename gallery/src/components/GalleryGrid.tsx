@@ -2,7 +2,7 @@ import React,{useRef,useLayoutEffect,useState} from 'react';
 import {PhotoItem,SESSION_INFO} from '../data/galleryData';
 import {Heart} from 'lucide-react';
 import {justifiedRows} from './justifiedRows.mjs';
-export type GalleryView='masonry'|'rows'|'large';
+export type GalleryView='masonry'|'rows';
 interface Props {photos:PhotoItem[];view:GalleryView;onPhotoClick:(id:string)=>void;favorites:Set<string>;onToggleFavorite:(id:string,e:React.MouseEvent)=>void;}
 export function GalleryGrid({photos,view,onPhotoClick,favorites,onToggleFavorite}:Props){
  const container=useRef<HTMLDivElement>(null);
@@ -13,7 +13,7 @@ export function GalleryGrid({photos,view,onPhotoClick,favorites,onToggleFavorite
  const gap=width<640?8:12;
  const rows=justifiedRows(photos.map(p=>ratios[p.id]||2/3),width,gap,width<640?200:280);
  return <section aria-label={`${SESSION_INFO.clientName} photograph collection`} className={`gallery-collection gallery-view-${view}`}>
-  {!photos.length?<p className="p-8 text-neutral-500">No photographs to display.</p>:<div ref={container} className={view==='rows'?'justified-grid':`photo-grid ${view==='large'?'large-grid':''}`}>
+  {!photos.length?<p className="p-8 text-neutral-500">No photographs to display.</p>:<div ref={container} className={view==='rows'?'justified-grid':'photo-grid'}>
    {view==='rows'?rows.map((row,rowIndex)=><div className="justified-row" key={rowIndex}>{row.indices.map((index:number)=><div key={photos[index].id} style={{width:row.height*(ratios[photos[index].id]||2/3),flexShrink:0}}>{card(photos[index],index)}</div>)}</div>):photos.map(card)}
   </div>}
  </section>;
