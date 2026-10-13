@@ -18,11 +18,11 @@ The homepage does not list clients. Galleries are unlisted and excluded from sea
 
 ## Sessions
 
-A nested folder such as `jo/2026-10-12/` works at `/jo/2026-10-12`. `/jo` displays photos stored directly in `jo/` and links to its immediate subfolders. Each session only includes its own direct images, keeping sessions separate. When a person folder contains only sessions, its entrance uses sample images from those sessions and displays their combined photo count; View Gallery opens the session selector. Empty session folders stay hidden until photographs are uploaded. Date folder names in YYYY-MM-DD or YYYYMMDD format display as readable dates. The collection type is always Portrait Session. Photograph date ranges come from valid `-YYYYMMDD-` filename segments, not upload dates.
+A nested folder such as `jo/2026-10-12/` works at `/jo/2026-10-12`. `/jo` displays photos stored directly in `jo/` and links to its immediate subfolders. Each session only includes its own direct images, keeping sessions separate. When a person folder contains only sessions, its entrance uses sample images from those sessions and displays their combined photo count; View Gallery opens the session selector. Empty session folders stay hidden until photographs are uploaded. Session pages retain the top-level gallery name. Dates and date ranges are derived from valid YYYYMMDD segments in photograph filenames, rather than folder labels. The main session selector shows rotating thumbnail cards, their photo date ranges, and counts. Session covers and headers link back to the parent gallery. Thumbnail rotation can be paused and respects reduced motion. The collection type is always Portrait Session. Photograph date ranges come from valid `-YYYYMMDD-` filename segments, not upload dates.
 
 ## Optional names
 
-An optional `gallery.json` in any gallery folder can override its displayed title:
+An optional `gallery.json` in the top-level person folder can override its displayed name; all sessions inherit it:
 
 ```json
 {"title":"Jo Wasserman"}

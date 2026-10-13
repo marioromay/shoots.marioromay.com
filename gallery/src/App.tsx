@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { GALLERY_PHOTOS, GALLERY_PATH, GALLERY_SESSIONS, COVER_PHOTOS, FAVORITES_KEY, SESSION_INFO, PhotoItem, loadGallery } from './data/galleryData';
 import { MarioRomayLogo } from './components/MarioRomayLogo';
 import { ThemeToggle } from './theme';
+import { SessionCards } from './components/SessionCards';
 import { GalleryEntrance } from './components/GalleryEntrance';
 import { GalleryHeader } from './components/GalleryHeader';
 import { GalleryGrid, GalleryView } from './components/GalleryGrid';
@@ -121,7 +122,7 @@ function GalleryApp() {
 
       {/* 2. Main Gallery Page */}
       <main className="flex-1">
-        {GALLERY_SESSIONS.length>0 && <nav className="session-list" aria-label="Portrait sessions"><h2>Sessions</h2><div>{GALLERY_SESSIONS.map(session=><a key={session.path} href={'/'+session.path.split('/').map(encodeURIComponent).join('/')}><span>{session.title}</span><span>{session.photoCount?`${session.photoCount} photographs`:'View session'} →</span></a>)}</div></nav>}
+        {GALLERY_SESSIONS.length>0 && <SessionCards sessions={GALLERY_SESSIONS}/>}
         {/* Favorites Filter Notice if Active */}
         {showFavoritesOnly && (
           <div className="w-full px-3 sm:px-5 lg:px-8 pt-5 pb-2">

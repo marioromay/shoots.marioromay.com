@@ -1,14 +1,14 @@
 import {GalleryView} from './GalleryGrid';
 import {ThemeToggle} from '../theme';
 import React from 'react';
-import {SESSION_INFO} from '../data/galleryData';
+import {SESSION_INFO,PARENT_GALLERY} from '../data/galleryData';
 import {MarioRomayLogo} from './MarioRomayLogo';
-import {Play,Download,Heart,Columns3,Rows3} from 'lucide-react';
+import {Play,Download,Heart,Columns3,Rows3,ArrowLeft} from 'lucide-react';
 interface GalleryHeaderProps {hasPhotos:boolean;view:GalleryView;onChangeView:(view:GalleryView)=>void;onReturnToCover:()=>void;onStartSlideshow:()=>void;onOpenDownload:()=>void;favoritesCount:number;totalPhotos:number;showFavoritesOnly:boolean;onToggleFavoritesFilter:()=>void;}
 export const GalleryHeader:React.FC<GalleryHeaderProps>=({hasPhotos,view,onChangeView,onReturnToCover,onStartSlideshow,onOpenDownload,favoritesCount,totalPhotos,showFavoritesOnly,onToggleFavoritesFilter})=>(
 <header className="gallery-header sticky top-0 z-40 bg-[#fafafa]/95 backdrop-blur-md border-b border-neutral-200/80">
  <div className="gallery-toolbar">
-  <button onClick={onReturnToCover} className="gallery-brand" aria-label={`Return to ${SESSION_INFO.clientName} gallery cover`}><MarioRomayLogo size="sm"/><span className="gallery-brand-info"><span className="gallery-brand-title" title={SESSION_INFO.clientName}>{SESSION_INFO.clientName}</span><span className="gallery-brand-details">{SESSION_INFO.year && <span>{SESSION_INFO.year}</span>}<span><span className="photo-count-long">{totalPhotos} photographs</span><span className="photo-count-short">{totalPhotos} photos</span></span></span></span></button>
+  <div className="gallery-brand"><button onClick={onReturnToCover} aria-label={`Return to ${SESSION_INFO.clientName} gallery cover`}><MarioRomayLogo size="sm"/></button><div className="gallery-brand-info"><button onClick={onReturnToCover} className="gallery-brand-title" title={SESSION_INFO.clientName}>{SESSION_INFO.clientName}</button><span className="gallery-brand-details">{SESSION_INFO.date && <span><span className="gallery-date-full">{SESSION_INFO.date}</span><span className="gallery-date-short">{SESSION_INFO.dateShort}</span></span>}<span><span className="photo-count-long">{totalPhotos} photographs</span><span className="photo-count-short">{totalPhotos} photos</span></span></span>{PARENT_GALLERY && <a className="parent-gallery-link" href={'/'+PARENT_GALLERY.path.split('/').map(encodeURIComponent).join('/')+'#gallery'}><ArrowLeft size={12}/><span>Back to {PARENT_GALLERY.title}</span></a>}</div></div>
   <div className="gallery-toolbar-actions">
    <div className="gallery-view-switch" role="group" aria-label="Gallery layout">
     <button onClick={()=>onChangeView('masonry')} aria-label="Masonry view" title="Masonry view" aria-pressed={view==='masonry'} className={view==='masonry'?'is-active':''}><Columns3 size={16}/><span>Masonry</span></button>

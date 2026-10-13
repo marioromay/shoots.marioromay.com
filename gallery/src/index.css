@@ -189,3 +189,32 @@ html[data-theme="dark"],html[data-theme="dark"] body{background:#101010;color:#e
 @media(max-width:1199px){.gallery-header .gallery-brand-info{flex-direction:column;align-items:flex-start;gap:7px}.gallery-header .gallery-brand-title{max-width:220px}.gallery-header .gallery-toolbar{gap:14px}.gallery-header .action-label{display:none}.gallery-header .gallery-header-action{width:40px;padding:8px}}
 @media(max-width:767px){.gallery-header .gallery-toolbar{padding:10px 8px;gap:8px;min-height:82px}.gallery-header .gallery-toolbar .photography-logo-sm{width:48px}.gallery-header .gallery-brand{flex:1 1 auto;gap:8px}.gallery-header .gallery-brand-info{gap:4px}.gallery-header .gallery-brand-title{font-size:17px;max-width:100%;width:100%}.gallery-header .gallery-brand-details{flex-direction:column;gap:2px;font-size:9px;line-height:1.3;max-width:none}.gallery-header .gallery-brand-details span+span::before{content:none}.gallery-header .photo-count-long{display:none}.gallery-header .photo-count-short{display:inline}.gallery-header .gallery-toolbar-actions{gap:2px}.gallery-header .gallery-view-switch button{width:32px;min-height:40px;padding:6px}.gallery-header .gallery-view-switch button span{display:none}.gallery-header .gallery-header-action,.gallery-header .theme-toggle{width:32px;min-height:40px;padding:6px}.gallery-header .gallery-view-switch{gap:0}}
 @media(max-width:359px){.gallery-header .gallery-toolbar .photography-logo-sm{width:40px}.gallery-header .gallery-brand{gap:5px}.gallery-header .gallery-brand-title{font-size:15px}.gallery-header .gallery-toolbar-actions{gap:0}.gallery-header .gallery-view-switch button,.gallery-header .gallery-header-action,.gallery-header .theme-toggle{width:30px}}
+
+/* Gallery names stay separate from photo dates; parent navigation stays with identity. */
+.gallery-header .gallery-brand-info{flex-direction:column;align-items:flex-start;gap:6px}
+.gallery-header .gallery-brand-title{text-align:left}
+.gallery-date-short{display:none}
+.parent-gallery-link{display:inline-flex;align-items:center;gap:5px;font-size:10px;line-height:1.3;color:inherit;opacity:.75;white-space:nowrap}
+.parent-gallery-link:hover{opacity:1;text-decoration:underline;text-underline-offset:3px}
+.entrance-back{position:absolute;top:calc(25px + env(safe-area-inset-top));left:24px;font-size:12px;z-index:2}
+.session-cards{padding:28px 20px 40px;max-width:1800px;margin:0 auto}
+.session-cards-heading{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:18px}
+.session-cards-heading h2{font-size:12px;text-transform:uppercase;letter-spacing:.15em}
+.session-preview-toggle{display:flex;align-items:center;gap:6px;font-size:11px;padding:8px 0;opacity:.7;cursor:pointer}
+.session-preview-toggle:hover{opacity:1}
+.session-cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+.session-card{display:block;min-width:0;max-width:500px}
+.session-card-image{position:relative;aspect-ratio:4/5;overflow:hidden;background:#8881}
+.session-card-image img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 38%}
+.session-card-image .session-current-image{animation:coverFade .8s ease-in-out}
+.session-card-placeholder{display:grid;place-items:center;height:100%;opacity:.4}
+.session-card-caption{padding:14px 0;display:flex;flex-direction:column;gap:7px}
+.session-card-name{display:flex;align-items:center;justify-content:space-between;font-size:20px}
+.session-card-date{font-size:12px;line-height:1.6;opacity:.75}
+.session-card-count{font-size:11px;opacity:.55}
+.session-card:hover .session-card-name{text-decoration:underline;text-underline-offset:4px}
+a:focus-visible{outline:2px solid #00a3e0;outline-offset:4px}
+@media(max-width:767px){.gallery-header .gallery-brand-info{gap:3px}.gallery-date-full{display:none}.gallery-date-short{display:inline}.session-cards{padding:20px 12px 32px}.session-cards-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 12px}.session-card-caption{padding:10px 0;gap:5px}.session-card-name{font-size:18px}.session-card-date{font-size:10px}.session-card-count{font-size:10px}.entrance-back{left:18px}.gallery-header .parent-gallery-link{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.session-card-image .session-current-image{animation:none}}
+
+@media(max-width:767px){.gallery-header .gallery-brand-details{white-space:normal;flex-shrink:1;min-width:0}.gallery-header .gallery-brand-info{min-width:0}.gallery-header .gallery-date-short{line-height:1.4}}

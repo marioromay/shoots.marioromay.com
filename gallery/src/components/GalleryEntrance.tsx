@@ -1,8 +1,8 @@
 import React,{useEffect,useState} from 'react';
-import {Pause,Play} from 'lucide-react';
+import {Pause,Play,ArrowLeft} from 'lucide-react';
 import {MarioRomayLogo} from './MarioRomayLogo';
 import {ThemeToggle} from '../theme';
-import {PhotoItem,SESSION_INFO} from '../data/galleryData';
+import {PhotoItem,SESSION_INFO,PARENT_GALLERY} from '../data/galleryData';
 export function GalleryEntrance({photos,photoCount=photos.length,onEnter}:{photos:PhotoItem[];photoCount?:number;onEnter:()=>void}){
  const [index,setIndex]=useState(()=>Math.floor(Math.random()*photos.length));
  const [previousIndex,setPreviousIndex]=useState<number|null>(null);
@@ -17,11 +17,12 @@ export function GalleryEntrance({photos,photoCount=photos.length,onEnter}:{photo
    {photo && <img key={photo.id} className="featured-photo" src={photo?.src} alt="" loading="eager" fetchPriority="high"/>}
   </div>
   <div className="entrance-theme"><ThemeToggle/></div>
+  {PARENT_GALLERY && <a className="entrance-back parent-gallery-link" href={'/'+PARENT_GALLERY.path.split('/').map(encodeURIComponent).join('/')+'#gallery'}><ArrowLeft size={16}/><span>Back to {PARENT_GALLERY.title}</span></a>}
   <section className="entrance-intro" aria-labelledby="entrance-title">
    <div className="entrance-copy">
     <MarioRomayLogo size="lg" className="entrance-logo"/>
     <h1 id="entrance-title">{SESSION_INFO.clientName}</h1>
-    <div className="entrance-details">{SESSION_INFO.year && <span>{SESSION_INFO.year}</span>}<span>{photoCount} photographs</span></div>
+    <div className="entrance-details">{SESSION_INFO.date && <span>{SESSION_INFO.date}</span>}<span>{photoCount} photographs</span></div>
     <button onClick={onEnter} className="entrance-button">View Gallery</button>
    </div>
   </section>
