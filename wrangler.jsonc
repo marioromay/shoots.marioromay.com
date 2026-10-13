@@ -1,0 +1,15 @@
+{
+ "$schema":"./node_modules/wrangler/config-schema.json",
+ "name":"shoots-marioromay-com",
+ "main":"worker/index.js",
+ "compatibility_date":"2026-10-13",
+ "compatibility_flags":["nodejs_compat"],
+ "workers_dev":true,
+ "preview_urls":false,
+ "keep_vars":true,
+ "build":{"command":"npm run build"},
+ "assets":{"directory":"./gallery-build","binding":"ASSETS","run_worker_first":true,"html_handling":"none","not_found_handling":"none"},
+ "r2_buckets":[{"binding":"SHOOTS","bucket_name":"shoots"}],
+ "routes":[{"pattern":"shoots.marioromay.com","custom_domain":true}],
+ "observability":{"enabled":true,"head_sampling_rate":1}
+}

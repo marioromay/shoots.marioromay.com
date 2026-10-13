@@ -1,0 +1,8 @@
+function crc32(bytes:Uint8Array){let crc=0xffffffff;for(const byte of bytes){crc^=byte;for(let i=0;i<8;i++)crc=(crc>>>1)^((crc&1)?0xedb88320:0)}return (crc^0xffffffff)>>>0}
+export async function downloadZip(photos:{id:string;src:string}[],filename:string){
+ const chunks:BlobPart[]=[],central:BlobPart[]=[];let offset=0,centralSize=0;
+ for(const photo of photos){const r=await fetch(photo.src);if(!r.ok)throw new Error('A photograph could not be downloaded. Please retry.');const bytes=new Uint8Array(await r.arrayBuffer()),name=new TextEncoder().encode(photo.id),crc=crc32(bytes);const local=new Uint8Array(30+name.length),v=new DataView(local.buffer);v.setUint32(0,0x04034b50,true);v.setUint16(4,20,true);v.setUint16(6,0x800,true);v.setUint32(14,crc,true);v.setUint32(18,bytes.length,true);v.setUint32(22,bytes.length,true);v.setUint16(26,name.length,true);local.set(name,30);chunks.push(local,bytes);
+ const entry=new Uint8Array(46+name.length),c=new DataView(entry.buffer);c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,0x800,true);c.setUint32(16,crc,true);c.setUint32(20,bytes.length,true);c.setUint32(24,bytes.length,true);c.setUint16(28,name.length,true);c.setUint32(42,offset,true);entry.set(name,46);central.push(entry);centralSize+=entry.length;offset+=local.length+bytes.length;
+ }
+ const end=new Uint8Array(22),e=new DataView(end.buffer);e.setUint32(0,0x06054b50,true);e.setUint16(8,photos.length,true);e.setUint16(10,photos.length,true);e.setUint32(12,centralSize,true);e.setUint32(16,offset,true);const url=URL.createObjectURL(new Blob([...chunks,...central,end],{type:'application/zip'}));const a=document.createElement('a');a.href=url;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(url),60000);
+}
