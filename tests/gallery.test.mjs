@@ -9,3 +9,7 @@ test('routes arbitrary gallery paths, returns real 404s and streams original med
 test('date labels validate dates instead of treating malformed dates as real sessions',()=>{assert.equal(folderTitle('2026-10-12'),'October 12, 2026');assert.equal(folderTitle('20180806'),'August 6, 2018');assert.notEqual(folderTitle('2026-02-31'),'March 3, 2026')});
 
 test('full object range metadata does not turn ordinary downloads into partial responses',async()=>{const b={get:async()=>({size:5,range:{offset:0,length:5},body:'photo',httpEtag:'"v1"',writeHttpMetadata(){}})};const response=await worker.fetch(new Request('https://example.com/media/jo/a.jpg'),{SHOOTS:b});assert.equal(response.status,200);assert.equal(response.headers.get('Content-Range'),null)});
+
+test('empty folder markers are hidden until session photographs are uploaded',async()=>{const b=bucket({'jo/main.jpg':'photo','jo/20180806/':''});assert.equal((await readGallery(b,'jo')).sessions.length,0);assert.equal(await readGallery(b,'jo/20180806'),null);b.entries.set('jo/20180806/photo.jpg','photo');assert.equal((await readGallery(b,'jo')).sessions.length,1)});
+
+test('person galleries with only sessions have cover photographs and combined counts',async()=>{const b=bucket({'jo/2018-08-06/Jo-20180806-001.jpg':'photo','jo/2021-10-27/Jo-20211027-002.jpg':'photo'});const gallery=await readGallery(b,'jo');assert.equal(gallery.totalPhotos,2);assert.equal(gallery.yearRange,'2018–2021');assert.equal(gallery.images.length,0);assert.equal(gallery.coverImages.length,2);assert.equal(gallery.sessions.length,2)});

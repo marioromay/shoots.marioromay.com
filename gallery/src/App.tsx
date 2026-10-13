@@ -102,7 +102,7 @@ function GalleryApp() {
   if(!GALLERY_PATH)return <main className="gallery-entrance"><div className="entrance-theme"><ThemeToggle/></div><div className="entrance-copy"><MarioRomayLogo size="lg" className="entrance-logo"/><h1>Portrait galleries</h1><p style={{textTransform:'none',letterSpacing:0,lineHeight:1.8}}>Open your gallery using the personal link Mario shared with you.</p></div></main>;
   if(!loaded) return <div className="min-h-screen grid place-items-center bg-[#fafafa] text-neutral-700"><div role="status">{error || 'Loading your photographs…'}{error && <button className="block mt-4 underline" onClick={()=>location.reload()}>Try again</button>}</div></div>;
 
-  if(!entered) return <GalleryEntrance photos={COVER_PHOTOS} photoCount={GALLERY_PHOTOS.length} onEnter={enterGallery}/>;
+  if(!entered) return <GalleryEntrance photos={COVER_PHOTOS} photoCount={SESSION_INFO.totalDelivered} onEnter={enterGallery}/>;
   return (
     <div className="min-h-screen flex flex-col bg-[#fafafa] text-neutral-900 selection:bg-neutral-900 selection:text-white">
       {/* 1. Gallery Header */}
@@ -113,7 +113,8 @@ function GalleryApp() {
         onStartSlideshow={() => handleOpenSlideshow()}
         onOpenDownload={() => setDownloadModalOpen(true)}
         favoritesCount={favorites.size}
-        totalPhotos={GALLERY_PHOTOS.length}
+        totalPhotos={SESSION_INFO.totalDelivered}
+        hasPhotos={GALLERY_PHOTOS.length>0}
         showFavoritesOnly={showFavoritesOnly}
         onToggleFavoritesFilter={() => setShowFavoritesOnly((prev) => !prev)}
       />
@@ -144,13 +145,13 @@ function GalleryApp() {
         )}
 
         {/* Responsive Gallery Grid */}
-        <GalleryGrid
+        {GALLERY_PHOTOS.length>0 && <GalleryGrid
           view={view}
           photos={displayedPhotos}
           onPhotoClick={handleOpenSlideshow}
           favorites={favorites}
           onToggleFavorite={toggleFavorite}
-        />
+        />}
       </main>
 
       {/* 3. Editorial Footer */}

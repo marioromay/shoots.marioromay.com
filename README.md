@@ -18,7 +18,7 @@ The homepage does not list clients. Galleries are unlisted and excluded from sea
 
 ## Sessions
 
-A nested folder such as `jo/2026-10-12/` works at `/jo/2026-10-12`. `/jo` displays photos stored directly in `jo/` and links to its immediate subfolders. Each session only includes its own direct images, keeping sessions separate. Date folder names in YYYY-MM-DD or YYYYMMDD format display as readable dates. The collection type is always Portrait Session. Photograph date ranges come from valid `-YYYYMMDD-` filename segments, not upload dates.
+A nested folder such as `jo/2026-10-12/` works at `/jo/2026-10-12`. `/jo` displays photos stored directly in `jo/` and links to its immediate subfolders. Each session only includes its own direct images, keeping sessions separate. When a person folder contains only sessions, its entrance uses sample images from those sessions and displays their combined photo count; View Gallery opens the session selector. Empty session folders stay hidden until photographs are uploaded. Date folder names in YYYY-MM-DD or YYYYMMDD format display as readable dates. The collection type is always Portrait Session. Photograph date ranges come from valid `-YYYYMMDD-` filename segments, not upload dates.
 
 ## Optional names
 
