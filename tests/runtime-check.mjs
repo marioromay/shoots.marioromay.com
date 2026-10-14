@@ -18,5 +18,16 @@ const unlock=await call('/api/unlock',{path:'jo/session',password:'client-code'}
 assert.equal((await call('/media/jo/session/Jo-20261013-001.jpg',undefined,client)).status,200);assert.equal((await call('/api/download/jo/session/Jo-20261013-001.jpg',undefined,client)).status,403);
 const data=await (await call('/api/gallery?path=jo/session',undefined,client)).json();assert.equal(data.title,'Jo Updated');assert.equal(data.downloadsAllowed,false);
 const stale=await call('/api/admin/settings',{...settings,title:'stale',access:'public'},owner);assert.equal(stale.status,409);
+assert.equal((await call('/api/admin/folders')).status,401);
+assert.equal((await call('/api/admin/folders',{path:'jo/2026/session'},owner)).status,201);
+const emptySettings=await (await call('/api/admin/settings?path=jo/2026/session',undefined,owner)).json();
+assert.equal(emptySettings.parentAccess,'private');
+assert.equal((await call('/api/admin/settings',{...emptySettings,access:'inherit',downloads:true},owner)).status,200);
+const upload=()=>mf.dispatchFetch('https://shoots.test/api/admin/upload?path=jo%2F2026%2Fsession&name=Jo-20261013-new.jpg',{method:'PUT',headers:{Origin:'https://shoots.test',Cookie:owner,'Content-Type':'image/jpeg','Content-Length':'5'},body:'photo'});
+let uploaded=await upload();assert.equal(uploaded.status,201,await uploaded.text());assert.equal((await upload()).status,409);
+assert.equal((await call('/media/jo/2026/session/Jo-20261013-new.jpg')).status,401);
+const root=await (await call('/api/gallery?path=jo',undefined,client)).json();assert.equal(root.totalPhotos,2);assert.equal(root.sessions.find(s=>s.path==='jo/2026').photoCount,1);
+const browse=await (await call('/api/admin/folders?path=jo/2026/session',undefined,owner)).json();assert.equal(browse.photos.length,1);
+assert.equal((await call('/api/admin/folders',{path:'_admin/secret'},owner)).status,400);
 console.log('Workers/R2 runtime checks passed: owner setup, conditional writes, inherited title, private photo access, unlock and download policy.');
 }finally{await mf.dispose();await rm(scratch,{recursive:true,force:true})}
