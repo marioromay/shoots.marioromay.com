@@ -12,13 +12,13 @@ Reusable portrait gallery application for https://shoots.marioromay.com.
 
 ## Add a gallery
 
-Upload images inside a folder in the `shoots` bucket, for example `mario/photo-001.jpg`. Share `https://shoots.marioromay.com/mario`. The Worker lists that folder on every gallery load; uploads/deletions need no code deployment. Listings are uncached; image files cache for up to five minutes after replacement. Use lowercase folder names for predictable links. Reserved root names: `api`, `media`, `assets`, `__preview`.
+Upload images inside a folder in the `shoots` bucket, for example `mario/photo-001.jpg`. Share `https://shoots.marioromay.com/mario`. The Worker lists that folder on every gallery load; uploads/deletions need no code deployment. Listings and photographs use no-store responses. Use lowercase folder names for predictable links. Reserved root names: `api`, `media`, `assets`, `__preview`, `admin`, `_admin`.
 
-The homepage does not list clients. Galleries are unlisted and excluded from search indexing; anyone with a link can view and download photographs. Password protection is not implemented.
+The homepage does not list clients. All galleries and photographs carry search-exclusion instructions. Existing galleries default to public access by link; `/admin` can set private passwords and disable downloads. See [the admin guide](docs/shoots-admin-guide.md) for setup and recovery.
 
 ## Sessions
 
-A nested folder such as `jo/2026-10-12/` works at `/jo/2026-10-12`. `/jo` displays photos stored directly in `jo/` and links to its immediate subfolders. Each session only includes its own direct images, keeping sessions separate. When a person folder contains only sessions, its entrance uses sample images from those sessions and displays their combined photo count; View Gallery opens the session selector. Empty session folders stay hidden until photographs are uploaded. Session pages retain the top-level gallery name. Dates and date ranges are derived from valid YYYYMMDD segments in photograph filenames, rather than folder labels. The main session selector shows rotating thumbnail cards, their photo date ranges, and counts. Session covers and headers link back to the parent gallery. Thumbnail rotation can be paused and respects reduced motion. The collection type is always Portrait Session. Photograph date ranges come from valid `-YYYYMMDD-` filename segments, not upload dates.
+A nested folder such as `jo/2026-10-12/` works at `/jo/2026-10-12`. `/jo` displays photos stored directly in `jo/` and links to its immediate subfolders. Each session only includes its own direct images, keeping sessions separate. When a person folder contains only sessions, its entrance uses sample images from those sessions and displays their combined photo count; View Gallery opens the session selector. Empty session folders stay hidden until photographs are uploaded. Session pages retain the top-level gallery name. Dates and date ranges are derived from valid YYYYMMDD segments in photograph filenames, rather than folder labels. The main session selector shows rotating thumbnail cards, their photo date ranges, and counts. Session covers and headers link back to the parent gallery. Thumbnail rotation can be paused and respects reduced motion. Photograph date ranges come from valid `-YYYYMMDD-` filename segments, not upload dates.
 
 ## Optional names
 
@@ -28,7 +28,7 @@ An optional `gallery.json` in the top-level person folder can override its displ
 {"title":"Jo Wasserman"}
 ```
 
-This metadata stays in R2 and can be changed without deploying code. No admin panel is included yet. No location or description is shown.
+This metadata stays in R2 and can be changed without deploying code. The owner-only admin panel updates this metadata without redeploying. No location or description is shown.
 
 ## UI
 
