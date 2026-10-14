@@ -1,7 +1,7 @@
 import {GalleryView} from './GalleryGrid';
 import {ThemeToggle} from '../theme';
 import React from 'react';
-import {SESSION_INFO,PARENT_GALLERY} from '../data/galleryData';
+import {SESSION_INFO,PARENT_GALLERY,DOWNLOADS_ALLOWED} from '../data/galleryData';
 import {MarioRomayLogo} from './MarioRomayLogo';
 import {Play,Download,Heart,Columns3,Rows3,ArrowLeft} from 'lucide-react';
 interface GalleryHeaderProps {hasPhotos:boolean;view:GalleryView;onChangeView:(view:GalleryView)=>void;onReturnToCover:()=>void;onStartSlideshow:()=>void;onOpenDownload:()=>void;favoritesCount:number;totalPhotos:number;showFavoritesOnly:boolean;onToggleFavoritesFilter:()=>void;}
@@ -16,7 +16,7 @@ export const GalleryHeader:React.FC<GalleryHeaderProps>=({hasPhotos,view,onChang
    </div>
    <ThemeToggle/>
    {favoritesCount>0 && <button onClick={onToggleFavoritesFilter} aria-pressed={showFavoritesOnly} aria-label={`Filter favorites (${favoritesCount})`} title={`Favorites (${favoritesCount})`} className={`gallery-header-action ${showFavoritesOnly?'favorites-active':''}`}><Heart size={16} fill={showFavoritesOnly?'currentColor':'none'}/><span className="action-label">Favorites ({favoritesCount})</span></button>}
-   <button disabled={!hasPhotos} onClick={onOpenDownload} className="gallery-header-action" aria-label="Download photographs" title="Download photographs"><Download size={16}/><span className="action-label">Download</span></button>
+   {DOWNLOADS_ALLOWED && <button disabled={!hasPhotos} onClick={onOpenDownload} className="gallery-header-action" aria-label="Download photographs" title="Download photographs"><Download size={16}/><span className="action-label">Download</span></button>}
    <button disabled={!hasPhotos} onClick={onStartSlideshow} className="gallery-header-action slideshow-action" aria-label="View slideshow" title="View slideshow"><Play size={15} fill="currentColor"/><span className="action-label">View Slideshow</span></button>
   </div>
  </div>

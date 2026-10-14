@@ -27,7 +27,7 @@ export const DownloadModal: React.FC<DownloadModalProps> = ({
   // Trigger download of an image
   const handleDownloadSingle = (photo: PhotoItem) => {
     const link = document.createElement('a');
-    link.href = photo.src;
+    link.href = photo.src.replace('/media/','/api/download/');
     link.download = `${photo.id}`;
     document.body.appendChild(link);
     link.click();

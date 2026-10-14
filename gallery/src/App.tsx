@@ -1,6 +1,7 @@
+import {AdminPanel,GalleryUnlock} from './components/AdminPanel';
 import {ThemeProvider} from './theme';
 import React, { useState, useEffect } from 'react';
-import { GALLERY_PHOTOS, GALLERY_PATH, GALLERY_SESSIONS, COVER_PHOTOS, FAVORITES_KEY, SESSION_INFO, PhotoItem, loadGallery } from './data/galleryData';
+import { DOWNLOADS_ALLOWED, GALLERY_PHOTOS, GALLERY_PATH, GALLERY_SESSIONS, COVER_PHOTOS, FAVORITES_KEY, SESSION_INFO, PhotoItem, loadGallery } from './data/galleryData';
 import { MarioRomayLogo } from './components/MarioRomayLogo';
 import { ThemeToggle } from './theme';
 import { SessionCards } from './components/SessionCards';
@@ -22,13 +23,15 @@ function GalleryApp() {
     setView(next);
     requestAnimationFrame(()=>requestAnimationFrame(()=>{const target=Array.from(document.querySelectorAll<HTMLElement>('[data-photo-id]')).find(node=>node.dataset.photoId===id);if(target)window.scrollBy({top:target.getBoundingClientRect().top-offset,behavior:'instant'});}));
   };
+  const [locked,setLocked]=useState(false);
+  const [loadAttempt,setLoadAttempt]=useState(0);
   const [loaded,setLoaded]=useState(false);
   const [error,setError]=useState('');
   const [entered,setEntered]=useState(()=>location.hash==='#gallery');
   useEffect(()=>{const sync=()=>{setEntered(location.hash==='#gallery');window.scrollTo(0,0)};window.addEventListener('hashchange',sync);return()=>window.removeEventListener('hashchange',sync);},[]);
   const enterGallery=()=>{setEntered(true);location.hash='gallery';window.scrollTo(0,0)};
   const returnToCover=()=>{setEntered(false);history.pushState(null,'',location.pathname+location.search);window.scrollTo(0,0)};
-  useEffect(()=>{if(!GALLERY_PATH)return;loadGallery().then(()=>setLoaded(true)).catch(e=>setError(e.message));},[]);
+  useEffect(()=>{if(!GALLERY_PATH)return;setError('');setLocked(false);loadGallery().then(()=>setLoaded(true)).catch(e=>e.locked?setLocked(true):setError(e.message));},[loadAttempt]);
   // Slideshow modal state
   const [slideshowOpen, setSlideshowOpen] = useState<boolean>(false);
   const [activePhotoIndex, setActivePhotoIndex] = useState<number>(0);
@@ -101,6 +104,7 @@ function GalleryApp() {
 
 
   if(!GALLERY_PATH)return <main className="gallery-entrance"><div className="entrance-theme"><ThemeToggle/></div><div className="entrance-copy"><MarioRomayLogo size="lg" className="entrance-logo"/><h1>Portrait galleries</h1><p style={{textTransform:'none',letterSpacing:0,lineHeight:1.8}}>Open your gallery using the personal link Mario shared with you.</p></div></main>;
+  if(locked)return <GalleryUnlock onUnlock={()=>setLoadAttempt(n=>n+1)}/>;
   if(!loaded) return <div className="min-h-screen grid place-items-center bg-[#fafafa] text-neutral-700"><div role="status">{error || 'Loading your photographs…'}{error && <button className="block mt-4 underline" onClick={()=>location.reload()}>Try again</button>}</div></div>;
 
   if(!entered) return <GalleryEntrance photos={COVER_PHOTOS} photoCount={SESSION_INFO.totalDelivered} onEnter={enterGallery}/>;
@@ -112,7 +116,7 @@ function GalleryApp() {
         onChangeView={changeView}
         onReturnToCover={returnToCover}
         onStartSlideshow={() => handleOpenSlideshow()}
-        onOpenDownload={() => setDownloadModalOpen(true)}
+        onOpenDownload={() => DOWNLOADS_ALLOWED && setDownloadModalOpen(true)}
         favoritesCount={favorites.size}
         totalPhotos={SESSION_INFO.totalDelivered}
         hasPhotos={GALLERY_PHOTOS.length>0}
@@ -173,14 +177,14 @@ function GalleryApp() {
       />
 
       {/* 5. Download Client Package Modal */}
-      <DownloadModal
+      {DOWNLOADS_ALLOWED && <DownloadModal
         isOpen={downloadModalOpen}
         onClose={() => setDownloadModalOpen(false)}
         photos={GALLERY_PHOTOS}
         favorites={favorites}
-      />
+      />}
     </div>
   );
 }
 
-export default function App(){return <ThemeProvider><GalleryApp/></ThemeProvider>}
+export default function App(){return <ThemeProvider>{location.pathname.replace(/\/$/,'')==='/admin'?<AdminPanel/>:<GalleryApp/>}</ThemeProvider>}
