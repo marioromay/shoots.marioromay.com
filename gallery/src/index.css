@@ -218,3 +218,9 @@ a:focus-visible{outline:2px solid #00a3e0;outline-offset:4px}
 @media(prefers-reduced-motion:reduce){.session-card-image .session-current-image{animation:none}}
 
 @media(max-width:767px){.gallery-header .gallery-brand-details{white-space:normal;flex-shrink:1;min-width:0}.gallery-header .gallery-brand-info{min-width:0}.gallery-header .gallery-date-short{line-height:1.4}}
+
+/* Shared waterfall presentation; client controls and Rows view remain intact. */
+.gallery-view-masonry .photo-grid{position:relative;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:16px}
+.gallery-view-masonry .photo-grid[data-waterfall="true"]>.gallery-photo{position:absolute;top:0;left:0;padding-bottom:0;grid-row:auto}
+.gallery-photo-open,.gallery-photo-open img{border-radius:8px}.gallery-photo-open{overflow:hidden}
+@media(max-width:767px){.gallery-view-masonry .photo-grid{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:10px}}
