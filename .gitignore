@@ -1,7 +1,7 @@
+.preview/
 node_modules/
-gallery-build/
 .wrangler/
-.dev.vars*
-.env*
-worker-configuration.d.ts
-.DS_Store
+.dev.vars
+
+.hosted/
+dist/

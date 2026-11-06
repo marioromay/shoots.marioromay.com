@@ -1,0 +1,10 @@
+{
+  "url": "https://shoots.marioromay.com",
+  "worker": "shoots-planner",
+  "repository": "marioromay/shoots.marioromay.com",
+  "branch": "main",
+  "account_id": "894fd4210d4d7d5532fafc8af53a6b5c",
+  "database_id": "242c735a-da3e-40d6-87cd-2c6e56a1c742",
+  "image_bucket": "shoots-planner-preview-images",
+  "storage_note": "Existing planning data promoted to production without copying or clearing records."
+}
