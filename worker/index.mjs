@@ -35,7 +35,7 @@ if(p==='/api/setup'&&method==='POST'){
 const clientResponse=await clientRoutes(req,env,p,method);if(clientResponse)return clientResponse;
 if(p==='/api/login'&&method==='POST')return login(req,env);
 const guestLogin=p.match(/^\/api\/g\/([^/]+)\/login$/);if(guestLogin&&method==='POST')return login(req,env,guestLogin[1]);
-if(p==='/api/logout'&&method==='POST'){const a=await access(req,env);await q(env,a.client?'DELETE FROM client_auth WHERE id=?':'DELETE FROM auth WHERE id=?',a.client?a.authId:a.id).run();return json({ok:true},200,{'Set-Cookie':`${a.client?'shoots_client':'shoots_owner'}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`})}
+if(p==='/api/logout'&&method==='POST'){const a=await access(req,env);await q(env,a.client?'DELETE FROM client_auth WHERE id=?':'DELETE FROM auth WHERE id=?',a.client?a.authId:a.id).run();const r=json({ok:true},200,{'Set-Cookie':'shoots_owner=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0'});r.headers.append('Set-Cookie','shoots_client=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0');return r}
 const gm=p.match(/^\/(api|media)\/g\/([^/]+)(\/.*)?$/);const token=gm?.[2];const path=gm?'/'+gm[1]+(gm[3]||''):p;
 if(path.startsWith('/api/')||path.startsWith('/media/')){const a=await access(req,env,token);
 if(path==='/api/me')return json({name:a.name,role:a.role,session:a.session,client:!!a.client,email:a.email});

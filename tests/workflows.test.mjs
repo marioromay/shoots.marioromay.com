@@ -70,6 +70,7 @@ await test('revoking a shoot, resetting passwords, and removing accounts end acc
  const r=await make('/api/client-login','POST',{email:'bamboo@example.test',password:'reset-password'});assert.equal(r.res.status,200);clientCookie=r.res.headers.getSetCookie().find(x=>x.startsWith('shoots_client=')).split(';')[0];
  await call('/clients/'+clientId,'DELETE',{});assert.equal((await clientCall('/me')).res.status,401);assert.equal((await make('/api/client-login','POST',{email:'bamboo@example.test',password:'reset-password'})).res.status,401);
 });
+await test('signing out clears both owner and client cookies',async()=>{const r=await call('/logout','POST',{});assert.equal(r.res.status,200);const cookies=r.res.headers.getSetCookie();assert.ok(cookies.some(x=>x.startsWith('shoots_owner=;')));assert.ok(cookies.some(x=>x.startsWith('shoots_client=;')));const again=await make('/api/login','POST',{password:'Test-owner-password!'});owner=again.res.headers.getSetCookie()[0].split(';')[0];});
 await test('all pages, API responses and private images opt out of indexing',async()=>{
  for(const url of ['/','/bamboo','/robots.txt','/api/me','/media/'+asset]){const r=await make(url,'GET',undefined,owner);assert.match(r.res.headers.get('X-Robots-Tag'),/noindex/);assert.match(r.res.headers.get('X-Robots-Tag'),/noimageindex/);}assert.match((await make('/robots.txt')).d,/Disallow: \//);
 });
