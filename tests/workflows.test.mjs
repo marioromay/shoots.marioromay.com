@@ -37,6 +37,43 @@ await test('session deletion requires owner access, exact confirmation, and a cu
 await test('session responses omit retired gallery metadata',async()=>{
  const row=await q('SELECT details FROM sessions WHERE id=?',sid).first();await q('UPDATE sessions SET details=? WHERE id=?',JSON.stringify({...JSON.parse(row.details),gallery:'https://example.invalid/retired'}),sid).run();const r=await call('/sessions/'+sid);assert.equal(r.res.status,200);assert.equal('gallery' in r.d.details,false);assert.equal('gallery' in (await call('/sessions')).d.find(s=>s.id===sid).details,false);
 });
+let clientId,clientCookie;
+const clientCall=(p,m='GET',b,c=clientCookie)=>make('/api'+p,m,b,c);
+await test('client accounts are owner-managed and passwords never leave the API',async()=>{
+ assert.equal((await make('/api/clients','POST',{name:'No',email:'no@example.test',password:'1234'})).res.status,401);
+ const r=await call('/clients','POST',{name:'Bamboo',email:'Bamboo@example.test',password:'3125551234'});assert.equal(r.res.status,201);clientId=r.d.id;
+ const rows=(await call('/clients')).d;assert.equal(rows[0].email,'bamboo@example.test');assert.ok(!JSON.stringify(rows).includes('password'));assert.equal((await call('/clients','POST',{name:'Duplicate',email:'bamboo@example.test',password:'1234'})).res.status,409);
+});
+await test('email sign-in is case insensitive and uses a protected cookie',async()=>{
+ assert.equal((await make('/api/client-login','POST',{email:'bamboo@example.test',password:'bad'})).res.status,401);
+ const r=await make('/api/client-login','POST',{email:'BAMBOO@example.test',password:'3125551234',remember:true});assert.equal(r.res.status,200);const cookie=r.res.headers.getSetCookie().find(x=>x.startsWith('shoots_client='));clientCookie=cookie.split(';')[0];assert.match(cookie,/HttpOnly/);assert.match(cookie,/Secure/);assert.match(cookie,/Max-Age=2592000/);assert.equal((await clientCall('/me')).d.client,true);assert.deepEqual((await clientCall('/sessions')).d,[]);
+});
+await test('short URLs require sign-in and permission; assignments isolate data and images',async()=>{
+ assert.equal((await call('/sessions/'+sid+'/address','PUT',{slug:'bamboo'})).res.status,200);assert.equal((await call('/sessions/'+other+'/address','PUT',{slug:'bamboo'})).res.status,409);assert.equal((await call('/sessions/'+sid+'/address','PUT',{slug:'api'})).res.status,400);
+ assert.equal((await make('/api/shoot-url/bamboo')).res.status,401);assert.equal((await clientCall('/shoot-url/bamboo')).res.status,403);
+ assert.equal((await call('/sessions/'+sid+'/clients','PUT',{client:clientId,role:'view'})).res.status,200);
+ assert.equal((await clientCall('/shoot-url/bamboo')).d.id,sid);const shoots=(await clientCall('/sessions')).d;assert.equal(shoots.length,1);assert.equal(shoots[0].slug,'bamboo');assert.equal((await clientCall('/sessions/'+sid)).d.notes.length,1);
+ assert.equal((await clientCall('/sessions/'+other)).res.status,403);assert.equal((await clientCall('/library')).res.status,403);assert.equal((await clientCall('/clients')).res.status,403);assert.equal((await make('/media/'+asset,'GET',undefined,clientCookie)).res.status,200);assert.equal((await make('/media/other-asset','GET',undefined,clientCookie)).res.status,403);
+ assert.equal((await clientCall('/items/'+item.id+'/comments','POST',{body:'Blocked'})).res.status,403);
+ const f=new FormData(),bytes=await readFile(new URL('../seed/0.jpg',import.meta.url));f.set('file',new File([bytes],'x.jpg'));f.set('thumb',new File([bytes],'t.jpg'));assert.equal((await clientCall('/upload?session='+sid,'POST',f)).res.status,403);
+ await call('/sessions/'+sid+'/clients','PUT',{client:clientId,role:'contribute'});assert.equal((await clientCall('/items/'+item.id+'/comments','POST',{body:'Allowed'})).res.status,201);assert.equal((await clientCall('/sessions/'+sid+'/notes/private','PATCH',{body:'No',version:1})).res.status,403);
+});
+await test('password changes require current password and invalidate other devices',async()=>{
+ const r=await make('/api/client-login','POST',{email:'bamboo@example.test',password:'3125551234'});const otherCookie=r.res.headers.getSetCookie().find(x=>x.startsWith('shoots_client=')).split(';')[0];
+ assert.equal((await clientCall('/account/password','POST',{current:'wrong',password:'new-password'})).res.status,401);
+ assert.equal((await clientCall('/account/password','POST',{current:'3125551234',password:'new-password'})).res.status,200);assert.equal((await clientCall('/me')).res.status,200);assert.equal((await clientCall('/me','GET',undefined,otherCookie)).res.status,401);
+ assert.equal((await make('/api/client-login','POST',{email:'bamboo@example.test',password:'3125551234'})).res.status,401);
+});
+await test('revoking a shoot, resetting passwords, and removing accounts end access',async()=>{
+ await call('/sessions/'+sid+'/clients','DELETE',{client:clientId});assert.equal((await clientCall('/sessions/'+sid)).res.status,403);assert.equal((await make('/media/'+asset,'GET',undefined,clientCookie)).res.status,403);
+ await call('/clients/'+clientId,'PATCH',{password:'reset-password'});assert.equal((await clientCall('/me')).res.status,401);
+ const r=await make('/api/client-login','POST',{email:'bamboo@example.test',password:'reset-password'});assert.equal(r.res.status,200);clientCookie=r.res.headers.getSetCookie().find(x=>x.startsWith('shoots_client=')).split(';')[0];
+ await call('/clients/'+clientId,'DELETE',{});assert.equal((await clientCall('/me')).res.status,401);assert.equal((await make('/api/client-login','POST',{email:'bamboo@example.test',password:'reset-password'})).res.status,401);
+});
+await test('all pages, API responses and private images opt out of indexing',async()=>{
+ for(const url of ['/','/bamboo','/robots.txt','/api/me','/media/'+asset]){const r=await make(url,'GET',undefined,owner);assert.match(r.res.headers.get('X-Robots-Tag'),/noindex/);assert.match(r.res.headers.get('X-Robots-Tag'),/noimageindex/);}assert.match((await make('/robots.txt')).d,/Disallow: \//);
+});
+
 await test('one-time owner setup chooses a password and invalidates earlier sessions',async()=>{
  const token='a'.repeat(64);await q("INSERT INTO settings VALUES('owner_setup',?)",await digest(token)).run();await q("INSERT INTO settings VALUES('owner_setup_expires',?)",String(Date.now()+60000)).run();
  assert.equal((await call('/setup','POST',{token,password:'short'},'')).res.status,400);
